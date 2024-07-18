@@ -1,7 +1,12 @@
-import { createClient } from '@libsql/client';
-import { env } from '~/env.js';
+import { Kysely } from 'kysely'
+import { LibsqlDialect } from '@libsql/kysely-libsql'
 
-export const turso = createClient({
-  url: env.TURSO_DATABASE_URL,
-  authToken: env.TURSO_AUTH_TOKEN,
-});
+import { Database } from './types.js'
+import { env } from '~/env.js'
+
+export const db = new Kysely<Database>({
+  dialect: new LibsqlDialect({
+    url: env.TURSO_DATABASE_URL,
+    authToken: env.TURSO_AUTH_TOKEN
+  })
+})

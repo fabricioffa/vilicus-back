@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "tsc && tsc-alias",
+    "watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
     "start": "node --env-file=.env  --watch ./dist/src/index.js ",
     "lint": "eslint 'src/**/*.{js,ts}' --fix",
-    "format": "eslint src/**/*.ts --fix"
+    "format": "eslint src/**/*.ts --fix",
+    "migrate": "node --env-file=.env ./dist/src/db/migrate.js"
   },
   "type": "module",
   "keywords": [],
@@ -17,14 +18,17 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.7.0",
+    "@types/better-sqlite3": "^7.6.11",
     "@types/eslint__js": "^8.42.3",
-    "@types/node": "^20.14.10",
+    "@types/node": "^20.14.11",
+    "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "prettier": "^3.3.3",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^7.16.0"
+    "typescript-eslint": "^7.16.1"
   },
   "engines": {
     "node": "22.4.1"
