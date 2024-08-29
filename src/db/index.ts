@@ -1,12 +1,5 @@
-import { Kysely } from 'kysely'
-import { LibsqlDialect } from '@libsql/kysely-libsql'
-
-import { Database } from './types.js'
-import { env } from '~/env.js'
-
-export const db = new Kysely<Database>({
-  dialect: new LibsqlDialect({
-    url: env.TURSO_DATABASE_URL,
-    authToken: env.TURSO_AUTH_TOKEN
-  })
-})
+import Database from 'better-sqlite3';
+const db = new Database('vilicus.db', { verbose: console.log });
+db.pragma('journal_mode = WAL');
+export type DB = typeof db;
+export { db };

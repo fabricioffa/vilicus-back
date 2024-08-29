@@ -1,6 +1,4 @@
-import { ColumnType, Generated, Insertable, Selectable, Updateable } from 'kysely';
-
-enum Units {
+export enum Unit {
   UNIT = 'UNIT',
   ML = 'ML',
   L = 'L',
@@ -8,64 +6,51 @@ enum Units {
   G = 'G',
 }
 
-enum PaymentForms {
+export enum PaymentForms {
   CREDIT_CARD = 'CREDIT_CARD',
   MONEY = 'MONEY',
   PIX = 'PIX',
 }
 
-type UnitStrings = `${Units}`;
-type PaymentFormsStrings = `${PaymentForms}`;
+export type UnitsUnion = `${Unit}`;
+export type PaymentFormsUnion = `${PaymentForms}`;
 
-export interface Database {
+export type Database = {
   product: ProductTable;
   category: CategoryTable;
   purchase: PurchaseTable;
 }
 
-//`ColumnType<SelectType, InsertType, UpdateType>`
-export interface ProductTable {
-  id: Generated<number>;
+export type ProductTable = {
+  id: number;
   name: string;
   description: string;
-  unit: UnitStrings;
-  avaiable: Boolean;
+  unit: UnitsUnion;
+  avaiable: boolean;
   category_id: number;
-  created_at: ColumnType<Date, string | undefined, never>;
-  updated_at: ColumnType<Date, string | undefined, string | undefined>;
+  created_at: string;
+  updated_at: string;
 }
 
-export type Person = Selectable<ProductTable>;
-export type NewPerson = Insertable<ProductTable>;
-export type PersonUpdate = Updateable<ProductTable>;
-
-export interface CategoryTable {
-  id: Generated<number>;
+export type CategoryTable = {
+  id: number;
   name: string;
-  created_at: ColumnType<Date, string | undefined, never>;
-  updated_at: ColumnType<Date, string | undefined, string | undefined>;
+  created_at: string;
+  updated_at: string;
 }
 
-export type Category = Selectable<CategoryTable>;
-export type NewCategory = Insertable<CategoryTable>;
-export type CategoryUpdate = Updateable<CategoryTable>;
-
-export interface PurchaseTable {
-  id: Generated<number>;
+export type PurchaseTable = {
+  id: number;
   value: number;
   discount: number;
   store: string;
   brand: string;
-  paymentForm: PaymentFormsStrings;
-  invoiceId: string;
+  payment_form: PaymentFormsUnion;
+  invoice_id: string;
   quantity: number;
   priority: number;
-  expirationDate: ColumnType<Date, string | undefined, string | undefined>;
+  expiration_date: string;
   product_id: number;
-  created_at: ColumnType<Date, string | undefined, never>;
-  updated_at: ColumnType<Date, string | undefined, string | undefined>;
+  created_at: string;
+  updated_at: string;
 }
-
-export type Purchase = Selectable<PurchaseTable>;
-export type NewPurchase = Insertable<PurchaseTable>;
-export type PurchaseUpdate = Updateable<PurchaseTable>;
