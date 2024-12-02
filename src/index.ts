@@ -9,6 +9,9 @@ const hostname = '127.0.0.1';
 createServer(handler)
 .listen(env.PORT, hostname, () => {
   console.log(`Server running at http://${hostname}:${env.PORT}/`);
-});
+})
+// .on('error', (err) => {
+//   console.log('%c err', 'color: green', err)
+// });
 
 process.on('exit', () => db.close());

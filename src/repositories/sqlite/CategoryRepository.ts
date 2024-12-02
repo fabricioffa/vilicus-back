@@ -1,5 +1,6 @@
 // repositories/CategoryRepository.js
-import { db, DB } from '~/db/index.js';
+import type { DB } from '~/db/index.js';
+import { db } from '~/db/index.js';
 import Category, { CategoryEntity } from '~/entities/Category.js';
 import { IBaseRepository } from '~/types.js';
 

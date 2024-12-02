@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
-    "start": "node --env-file=.env  --watch ./dist/src/index.js ",
-    "debug": "node --inspect --env-file=.env  ./dist/src/index.js ",
+    "start": "node --env-file=.env --watch --experimental-default-type=module --trace-warnings ./dist/src/index.js 2> errors.log",
+    "debug": "node --inspect --env-file=.env  ./dist/src/index.js",
     "lint": "eslint 'src/**/*.{js,ts}' --fix",
     "format": "eslint src/**/*.ts --fix",
     "migrate": "node --env-file=.env ./dist/src/db/migrate.js"
@@ -18,24 +18,24 @@
   "license": "ISC",
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.7.0",
+    "@eslint/js": "^9.13.0",
     "@types/better-sqlite3": "^7.6.11",
     "@types/eslint__js": "^8.42.3",
-    "@types/node": "^20.14.11",
+    "@types/node": "^22.8.1",
     "concurrently": "^8.2.2",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
     "tsc-alias": "^1.8.10",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^7.16.1"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^7.18.0"
   },
   "engines": {
-    "node": "22.4.1"
+    "node": "23.0.0"
   },
   "dependencies": {
-    "better-sqlite3": "^11.1.2",
+    "better-sqlite3": "^11.5.0",
     "zod": "^3.23.8"
   }
 }

@@ -1,5 +1,5 @@
-import { IncomingMessage } from 'node:http';
-import { MiddleWare, RouteHandlersCaller } from './types.js';
+import { IncomingMessage, RequestListener, ServerResponse } from 'node:http';
+import { RouteHandlersCaller } from './types.js';
 
 export const getDateFromString = (str: string) => {
   const date = new Date(str);
@@ -7,34 +7,36 @@ export const getDateFromString = (str: string) => {
   return date;
 };
 
+export const commonHeaders = {
+  preflight: {
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Accept, Content-Type',
+    'Access-Control-Max-Age': '86400',
+  },
+  jsonContentType: {'Content-Type': 'application/json'},
+} as const;
+// export const routeHandler: RouteHandlersCaller = async ({ req, res, requestListener, middlewares = [] }) => {
+//   for (const middleware of middlewares) {
+//     await middleware(req, res);
+//   }
+
+//   requestListener(req, res);
+// };
 export const routeHandler: RouteHandlersCaller = async ({ req, res, requestListener, middlewares = [] }) => {
-const bindedHandlers: (() => void)[] = [];
-for (let i = middlewares.length - 1; i >= 0; i--) {
-  const curMiddleware = middlewares[i];
-  if (i === middlewares.length - 1) {
-    bindedHandlers[i] = () => {
-      curMiddleware(req, res, () => requestListener(req, res));
-    };
-  } else {
-    bindedHandlers[i] = () => {
-      curMiddleware(req, res, bindedHandlers[i + 1]);
-    };
-  }
-}
-bindedHandlers.length ? bindedHandlers[0]() : requestListener(req, res);
-
-
-
-  for (const middleware of middlewares) {
-    await middleware(req, res);
+  const preFilledMiddleware: RequestListener[] = [];
+  for (let i = middlewares.length - 1; i >= 0; i--) {
+    if (i === middlewares.length - 1) {
+      preFilledMiddleware[i] = (request, response) => middlewares[i]!(request, response, requestListener);
+    } else {
+      preFilledMiddleware[i] = (request, response) => middlewares[i]!(request, response, preFilledMiddleware[i + 1]!);
+    }
   }
 
-  requestListener(req, res);
+  preFilledMiddleware.length ? preFilledMiddleware[0]!(req, res) : requestListener(req, res);
 };
 
 export const safeJSONParse = (data: string) => {
   try {
-    console.log('%c data', 'color: green', data)
     return typeof data === 'string' ? JSON.parse(data) : null;
   } catch (error) {
     return null;
@@ -43,22 +45,10 @@ export const safeJSONParse = (data: string) => {
 
 export const getJsonDataParsed = async (req: IncomingMessage) => {
   let body: Buffer[] = [];
-  let stringifiedData: string = '';
-
-  for await (const chunk of req) {
-    body.push(chunk)
-  }
-  
-  stringifiedData = Buffer.concat(body).toString();
-
-  // req
-  //   .on('data', (chunk: Buffer) => {
-  //     console.log('%c chunk', 'color: green', chunk)
-  //     body.push(chunk);
-  //   })
-  //   .on('end', () => {
-  //     stringifiedData = Buffer.concat(body).toString();
-  //     console.log('%c stringifiedData', 'color: green', stringifiedData)
-  //   });
-  return safeJSONParse(stringifiedData);
+  for await (const chunk of req) body.push(chunk);
+  return safeJSONParse(Buffer.concat(body).toString());
 };
+
+export const handlePreflight = (res: ServerResponse) => 
+  res.writeHead(204, commonHeaders.preflight ).end();
+
